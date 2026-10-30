@@ -1,0 +1,10 @@
+{
+  "name": "draper",
+  "version": "0.1.0",
+  "private": true,
+  "description": "How much fabric to make your curtains: the metres to order, the number of widths, the cut length and the waste, from the track width, drop and heading. Runs in the browser, nothing uploaded. With Bobbin the spool.",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
