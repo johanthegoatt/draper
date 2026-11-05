@@ -106,10 +106,20 @@
     // the same point in the pattern and the joins line up.
     var cutDrop = dropCm + headingCm + hem;
     var patternRounded = false;
+    var halfDropUsed = false;
     if (repeatCm > 0) {
       var r = Math.ceil((cutDrop - 1e-6) / repeatCm) * repeatCm;
       patternRounded = r > cutDrop + 1e-6 || widths > 1;
       cutDrop = r;
+      // A half-drop (offset) pattern steps down half a repeat on every other
+      // width, so where two widths are joined one has to start half a repeat
+      // further along to match across the seam. Adding half a repeat to each cut
+      // spreads that across the job so a join still matches. Only bites when
+      // there's more than one width to join.
+      if (opts.halfDrop && widths > 1) {
+        cutDrop += repeatCm / 2;
+        halfDropUsed = true;
+      }
     }
 
     var totalCm = widths * cutDrop;
@@ -140,7 +150,8 @@
       overlapCm: Math.round(overlap),
       totalCm: Math.round(totalCm),
       totalM: totalM,
-      patternRounded: patternRounded
+      patternRounded: patternRounded,
+      halfDrop: halfDropUsed
     };
 
     // Lining is cut to the same number of widths but with smaller turns and no
@@ -174,6 +185,9 @@
       (r.pair ? " (" + r.widthsPerCurtain + " per curtain, both sides matching)." : "."));
     if (r.patternRounded) {
       tips.push("Each drop is cut to a whole pattern repeat so the pattern lines up across the joins. That is where a patterned fabric wastes the most, so a big repeat costs more fabric.");
+    }
+    if (r.halfDrop) {
+      tips.push("A half-drop (offset) pattern steps down half a repeat on every other width, so I've allowed half a repeat extra per drop to match it across the joins. It uses more than a straight match.");
     }
     if (r.widths > (r.pair ? 2 : 1)) {
       tips.push("More than one width per curtain means a seam down each curtain. Put the joins towards the outer edges, not the leading edge you see most.");
