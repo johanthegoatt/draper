@@ -7,7 +7,7 @@
   var $ = function (id) { return document.getElementById(id); };
 
   var ids = ["track-w", "track-unit", "drop", "drop-unit", "heading", "fullness",
-    "fabric-w", "repeat", "pair", "lining", "price"];
+    "fabric-w", "repeat", "half-drop", "pair", "lining", "price"];
   var el = {};
   ids.forEach(function (id) { el[id] = $(id); });
   var out = $("out");
@@ -17,7 +17,7 @@
       tw: el["track-w"].value.trim(), twu: el["track-unit"].value,
       dr: el.drop.value.trim(), dru: el["drop-unit"].value,
       head: el.heading.value, full: el.fullness.value.trim(),
-      fw: el["fabric-w"].value.trim(), rep: el.repeat.value.trim(),
+      fw: el["fabric-w"].value.trim(), rep: el.repeat.value.trim(), hd: el["half-drop"].checked,
       pair: el.pair.checked, lining: el.lining.checked, price: el.price.value.trim()
     };
   }
@@ -32,6 +32,7 @@
     if (s.full != null) el.fullness.value = s.full;
     if (s.fw != null) el["fabric-w"].value = s.fw;
     if (s.rep != null) el.repeat.value = s.rep;
+    if (typeof s.hd === "boolean") el["half-drop"].checked = s.hd;
     if (typeof s.pair === "boolean") el.pair.checked = s.pair;
     if (typeof s.lining === "boolean") el.lining.checked = s.lining;
     if (s.price != null) el.price.value = s.price;
@@ -108,7 +109,7 @@
       heading: s.head,
       fullness: s.full === "" ? undefined : parseFloat(s.full),
       fabricWidth: s.fw === "" ? 137 : parseFloat(s.fw), fabricUnit: "cm",
-      repeat: s.rep === "" ? 0 : parseFloat(s.rep), repeatUnit: "cm",
+      repeat: s.rep === "" ? 0 : parseFloat(s.rep), repeatUnit: "cm", halfDrop: !!s.hd,
       pair: s.pair, lining: s.lining,
       returnEach: s.pair ? 7 : 0, overlap: s.pair ? 10 : 0,
       price: s.price, priceUnit: "m"
