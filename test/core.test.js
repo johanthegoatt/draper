@@ -104,3 +104,25 @@ test("wide fabric (280 cm) needs fewer widths than 137 cm", function () {
   var wide = D.plan({ track: { width: 3, unit: "m" }, drop: { value: 2, unit: "m" }, heading: "pencil", fabricWidth: 280 });
   assert.ok(wide.widths <= narrow.widths);
 });
+
+// Half-drop (offset) pattern match: half a repeat extra per width, but only
+// when there's more than one width to join.
+test("half-drop adds half a repeat per drop when widths are joined", function () {
+  var base = { track: { width: 300, unit: "cm" }, drop: { value: 220, unit: "cm" }, heading: "pencil", fabricWidth: 137, repeat: 64, repeatUnit: "cm", pair: false };
+  var straight = D.plan(Object.assign({}, base, { halfDrop: false }));
+  var offset = D.plan(Object.assign({}, base, { halfDrop: true }));
+  assert.ok(straight.ok && offset.ok);
+  assert.ok(offset.widths > 1, "this window takes more than one width");
+  assert.strictEqual(offset.cutDropCm, straight.cutDropCm + 32); // + half of a 64 cm repeat
+  assert.strictEqual(offset.halfDrop, true);
+  assert.ok(offset.totalM > straight.totalM);
+});
+
+test("half-drop does nothing with a single width or a plain fabric", function () {
+  var narrow = { track: { width: 90, unit: "cm" }, drop: { value: 180, unit: "cm" }, heading: "eyelet", fabricWidth: 280, repeat: 50, repeatUnit: "cm", pair: false, halfDrop: true };
+  var r = D.plan(narrow);
+  assert.strictEqual(r.widths, 1);
+  assert.strictEqual(r.halfDrop, false);
+  var plain = D.plan({ track: { width: 300, unit: "cm" }, drop: { value: 220, unit: "cm" }, heading: "pencil", fabricWidth: 137, repeat: 0, pair: false, halfDrop: true });
+  assert.strictEqual(plain.halfDrop, false);
+});
