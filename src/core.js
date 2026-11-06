@@ -38,16 +38,22 @@
   // come from UK curtain-making guidance (pencil pleat and eyelet about 2x,
   // pinch pleat about 2.3-2.5x, wave about 2-2.3x). The fullness is editable in
   // the page; these are the sensible middle of each range.
+  // `stack` is the stack-back: how wide the curtains bunch when pulled fully
+  // open, as a fraction of the track width (both curtains of a pair added up).
+  // It's what tells you how far past the glass the pole must reach so the open
+  // curtains don't cover the window and lose light. A heavier gather stacks
+  // wider; a wave heading stacks the tightest. These are typical trade figures
+  // for a medium-weight fabric; a thick or interlined fabric stacks wider.
   var HEADINGS = {
-    pencil: { label: "Pencil pleat", fullness: 2.25, heading: 10,
+    pencil: { label: "Pencil pleat", fullness: 2.25, heading: 10, stack: 0.25,
       note: "Pencil pleat gathers to about 2 to 2.5 times the track width." },
-    eyelet: { label: "Eyelet", fullness: 2.0, heading: 8,
+    eyelet: { label: "Eyelet", fullness: 2.0, heading: 8, stack: 0.2,
       note: "Eyelet panels hang in even waves at about 2 times the track width." },
-    "pinch-double": { label: "Pinch pleat (double)", fullness: 2.2, heading: 15,
+    "pinch-double": { label: "Pinch pleat (double)", fullness: 2.2, heading: 15, stack: 0.22,
       note: "Double pinch pleats take about 2 to 2.3 times the track width." },
-    "pinch-triple": { label: "Pinch pleat (triple)", fullness: 2.4, heading: 15,
+    "pinch-triple": { label: "Pinch pleat (triple)", fullness: 2.4, heading: 15, stack: 0.25,
       note: "Triple pinch pleats are the fullest, about 2.3 to 2.5 times the track width." },
-    wave: { label: "Wave / S-fold", fullness: 2.1, heading: 8,
+    wave: { label: "Wave / S-fold", fullness: 2.1, heading: 8, stack: 0.12,
       note: "Wave headings hang in a soft S at about 2 to 2.3 times the track width." }
   };
 
@@ -129,6 +135,13 @@
     // width is the fabric width times widths, over the fullness.
     var madeFullness = round2((widths * fabricCm - returnEach * 2 - overlap) / trackCm);
 
+    // Stack-back: how far the open curtains bunch. A pair splits its stack to
+    // the two ends, so each side is half; a single curtain stacks all to one
+    // side. This is how far the pole should run past the glass to clear it.
+    var stackFactor = isFinite(parseFloat(opts.stack)) && parseFloat(opts.stack) >= 0 ? parseFloat(opts.stack) : head.stack;
+    var stackbackCm = trackCm * stackFactor;
+    var stackbackSideCm = pair ? stackbackCm / 2 : stackbackCm;
+
     var out = {
       ok: true,
       heading: h,
@@ -136,6 +149,9 @@
       fullness: round2(fullness),
       madeFullness: madeFullness,
       pair: pair,
+      stackFactor: round2(stackFactor),
+      stackbackCm: Math.round(stackbackCm),
+      stackbackSideCm: Math.round(stackbackSideCm),
       trackCm: Math.round(trackCm),
       dropCm: Math.round(dropCm),
       fabricCm: Math.round(fabricCm),
@@ -192,6 +208,9 @@
     if (r.widths > (r.pair ? 2 : 1)) {
       tips.push("More than one width per curtain means a seam down each curtain. Put the joins towards the outer edges, not the leading edge you see most.");
     }
+    tips.push("Open, the curtains bunch to about " + r.stackbackCm + " cm" +
+      (r.pair ? " (roughly " + r.stackbackSideCm + " cm at each end)" : " to one side") +
+      ". So the pole or track wants to run about that far past the glass each side, or the stacked fabric sits over the window and loses light.");
     tips.push("Double-check the fabric width with the shop before you cut; a few cm less and a drop may not fit, a few more and you may save a width.");
     tips.push("Planning figures. Measure the finished drop with the track already up, and buy it all from one roll and batch so the colour matches.");
     return tips;
