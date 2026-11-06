@@ -61,6 +61,7 @@
       cell("Order", r.totalM + " m", true) +
       cell(r.pair ? "Widths (pair)" : "Widths", r.widths) +
       cell("Cut each", m(r.cutDropCm)) +
+      cell(r.pair ? "Stacks each side" : "Stacks to a side", r.stackbackSideCm + " cm") +
       (r.cost != null ? cell("Rough cost", r.cost) : "");
 
     var liningBlock = "";
