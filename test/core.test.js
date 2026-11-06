@@ -126,3 +126,36 @@ test("half-drop does nothing with a single width or a plain fabric", function ()
   var plain = D.plan({ track: { width: 300, unit: "cm" }, drop: { value: 220, unit: "cm" }, heading: "pencil", fabricWidth: 137, repeat: 0, pair: false, halfDrop: true });
   assert.strictEqual(plain.halfDrop, false);
 });
+
+test("stack-back: a pair splits its bunch to the two ends", () => {
+  const r = D.plan({
+    track: { width: 200, unit: "cm" }, drop: { value: 220, unit: "cm" },
+    heading: "pencil", pair: true
+  });
+  assert.ok(r.ok);
+  // pencil stack 0.25 of 200 = 50 cm total, 25 cm each side
+  assert.strictEqual(r.stackbackCm, 50);
+  assert.strictEqual(r.stackbackSideCm, 25);
+});
+
+test("stack-back: a single curtain stacks all to one side", () => {
+  const r = D.plan({
+    track: { width: 200, unit: "cm" }, drop: { value: 220, unit: "cm" },
+    heading: "pencil", pair: false
+  });
+  assert.strictEqual(r.stackbackCm, 50);
+  assert.strictEqual(r.stackbackSideCm, 50);
+});
+
+test("stack-back: a wave heading stacks tighter than pencil", () => {
+  const base = { track: { width: 200, unit: "cm" }, drop: { value: 220, unit: "cm" }, pair: true };
+  const pencil = D.plan(Object.assign({}, base, { heading: "pencil" }));
+  const wave = D.plan(Object.assign({}, base, { heading: "wave" }));
+  assert.ok(wave.stackbackCm < pencil.stackbackCm);
+});
+
+test("stack-back: the factor can be overridden for a heavy fabric", () => {
+  const r = D.plan({ track: { width: 200, unit: "cm" }, drop: { value: 220, unit: "cm" }, heading: "pencil", stack: 0.4 });
+  assert.strictEqual(r.stackFactor, 0.4);
+  assert.strictEqual(r.stackbackCm, 80);
+});
