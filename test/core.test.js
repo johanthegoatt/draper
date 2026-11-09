@@ -159,3 +159,32 @@ test("stack-back: the factor can be overridden for a heavy fabric", () => {
   assert.strictEqual(r.stackFactor, 0.4);
   assert.strictEqual(r.stackbackCm, 80);
 });
+
+// --- hooks, eyelets and gliders ---
+
+test("a pencil-pleat pair gives hooks at ~8 cm per curtain", function () {
+  var r = D.plan({ track: { width: 150, unit: "cm" }, drop: { value: 180, unit: "cm" }, heading: "pencil" });
+  assert.ok(r.ok);
+  assert.strictEqual(r.hardware.kind, "hook");
+  assert.ok(r.hardware.perCurtain >= 3);
+  assert.strictEqual(r.hardware.total, r.hardware.perCurtain * 2);
+});
+
+test("an eyelet curtain gives an even number of eyelets and no hooks", function () {
+  var r = D.plan({ track: { width: 150, unit: "cm" }, drop: { value: 180, unit: "cm" }, heading: "eyelet" });
+  assert.strictEqual(r.hardware.kind, "eyelet");
+  assert.strictEqual(r.hardware.perCurtain % 2, 0);
+  assert.ok(r.hardware.perCurtain >= 4);
+});
+
+test("a wave heading counts gliders along the track", function () {
+  var r = D.plan({ track: { width: 200, unit: "cm" }, drop: { value: 180, unit: "cm" }, heading: "wave", pair: true });
+  assert.strictEqual(r.hardware.kind, "glider");
+  // ~100 cm of track per curtain at 8 cm -> about 13 gliders
+  assert.ok(r.hardware.perCurtain >= 10 && r.hardware.perCurtain <= 16);
+});
+
+test("a single curtain doubles nothing", function () {
+  var r = D.plan({ track: { width: 120, unit: "cm" }, drop: { value: 180, unit: "cm" }, heading: "pencil", pair: false });
+  assert.strictEqual(r.hardware.total, r.hardware.perCurtain);
+});
