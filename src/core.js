@@ -73,6 +73,28 @@
   //   overlap:      the centre overlap where a pair crosses, cm (default 10 for a pair)
   //   lining:       true to also work out lining fabric
   //   price / priceUnit:  optional, per metre of the roll ("m") to cost it
+  // Hooks, eyelets or gliders for the heading. Taped headings (pencil, pinch)
+  // take a hook about every 8 cm along the flat tape; an eyelet curtain is
+  // punched with an even number of eyelets about every 18 cm and needs no hooks;
+  // a wave heading runs on a corded track with a glider about every 8 cm. These
+  // are typical UK curtain-making spacings; the pack tells you what it holds, so
+  // round up to whole packs when you buy.
+  function hardware(heading, perCurtainFlatCm, perCurtainTrackCm, pair) {
+    var curtains = pair ? 2 : 1;
+    if (heading === "eyelet") {
+      var n = Math.round(perCurtainFlatCm / 18);
+      if (n % 2 !== 0) n += 1;      // eyelets come in even numbers
+      if (n < 4) n = 4;
+      return { kind: "eyelet", label: "eyelets", spacingCm: 18, perCurtain: n, total: n * curtains };
+    }
+    if (heading === "wave") {
+      var g = Math.max(2, Math.ceil(perCurtainTrackCm / 8) + 1);
+      return { kind: "glider", label: "gliders", spacingCm: 8, perCurtain: g, total: g * curtains };
+    }
+    var hooksPer = Math.max(3, Math.ceil(perCurtainFlatCm / 8) + 1);
+    return { kind: "hook", label: "hooks", spacingCm: 8, perCurtain: hooksPer, total: hooksPer * curtains };
+  }
+
   function plan(opts) {
     opts = opts || {};
     var trackCm = toCm(opts.track && opts.track.width, opts.track && opts.track.unit);
@@ -189,6 +211,9 @@
       out.cost = null;
     }
 
+    // Hooks / eyelets / gliders for the heading, per curtain and for the set.
+    out.hardware = hardware(h, perCurtainFlat, trackCm / (pair ? 2 : 1), pair);
+
     out.advice = advise(out);
     return out;
   }
@@ -238,6 +263,6 @@
   return {
     IN: IN, TO_CM: TO_CM, HEADINGS: HEADINGS, FABRIC_WIDTHS_CM: FABRIC_WIDTHS_CM,
     toCm: toCm, round1: round1, round2: round2,
-    plan: plan, advise: advise, pack: pack, unpack: unpack
+    plan: plan, advise: advise, hardware: hardware, pack: pack, unpack: unpack
   };
 });
