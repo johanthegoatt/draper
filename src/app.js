@@ -57,11 +57,13 @@
       ? '<span class="seam warn">joins widths together</span>'
       : '<span class="seam good">single width, no joins</span>';
 
+    var hwLabel = r.hardware.label.charAt(0).toUpperCase() + r.hardware.label.slice(1);
     var grid =
       cell("Order", r.totalM + " m", true) +
       cell(r.pair ? "Widths (pair)" : "Widths", r.widths) +
       cell("Cut each", m(r.cutDropCm)) +
       cell(r.pair ? "Stacks each side" : "Stacks to a side", r.stackbackSideCm + " cm") +
+      cell(hwLabel, r.hardware.total) +
       (r.cost != null ? cell("Rough cost", r.cost) : "");
 
     var liningBlock = "";
@@ -89,7 +91,13 @@
           '<div class="grid">' + grid + '</div>' +
           '<p class="opt-sub">' + r.widths + (r.widths === 1 ? " width" : " widths") + ' of the ' + r.fabricCm +
           ' cm roll' + (r.pair ? ", " + r.widthsPerCurtain + " per curtain" : "") +
-          '. Made up it gathers to about ' + r.madeFullness + '× the track.</p>' +
+          '. Made up it gathers to about ' + r.madeFullness + '× the track. ' +
+          (r.hardware.kind === "eyelet"
+            ? r.hardware.perCurtain + ' eyelets a curtain (an even number, about every ' + r.hardware.spacingCm + ' cm); no hooks needed.'
+            : r.hardware.kind === "glider"
+              ? r.hardware.total + ' gliders for the wave track, about one every ' + r.hardware.spacingCm + ' cm.'
+              : r.hardware.perCurtain + ' hooks a curtain, about one every ' + r.hardware.spacingCm + ' cm of tape.') +
+          '</p>' +
         '</div>' +
       '</div>' +
       liningBlock +
