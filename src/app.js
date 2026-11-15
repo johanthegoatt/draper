@@ -64,6 +64,7 @@
       cell("Cut each", m(r.cutDropCm)) +
       cell(r.pair ? "Stacks each side" : "Stacks to a side", r.stackbackSideCm + " cm") +
       cell(hwLabel, r.hardware.total) +
+      (r.headingTape ? cell(r.headingTape.label === "wave tape" ? "Wave tape" : "Heading tape", r.headingTape.totalM + " m") : "") +
       (r.cost != null ? cell("Rough cost", r.cost) : "");
 
     var liningBlock = "";
