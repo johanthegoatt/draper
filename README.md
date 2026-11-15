@@ -21,6 +21,7 @@ Fullness ranges and the method (track × fullness ÷ fabric width, rounded up to
 
 - Pencil pleat and eyelet about 2×, pinch pleat about 2.5× — [Direct Fabrics: understanding curtain fullness](https://www.direct-fabrics.co.uk/understanding-curtain-fullness), [Loome fabric estimator](https://www.loomefabrics.co.uk/pages/curtain-fabric-estimator).
 - Cut drop = finished drop + heading + hem, pattern repeat rounded up to a whole repeat — [The Millshop: calculating the cut drop](https://www.the-millshop-online.co.uk/blogs/news/calculating-the-cut-drop).
+- Heading tape (curtain tape), sold by the metre, is worked out for a taped heading (pencil, pinch pleat, wave): the full flat top width of each curtain plus a turn-under each end, rounded up to whole metres. An eyelet heading uses rings, so no tape.
 
 The default allowances (heading turn by style, a 15 cm double hem, 7 cm returns, 10 cm centre overlap on a pair) are editable, and the fabric width is editable with a "check with the shop" note, because roll widths and workroom standards vary. These are planning figures, not a cutting plan.
 
