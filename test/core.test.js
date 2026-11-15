@@ -188,3 +188,31 @@ test("a single curtain doubles nothing", function () {
   var r = D.plan({ track: { width: 120, unit: "cm" }, drop: { value: 180, unit: "cm" }, heading: "pencil", pair: false });
   assert.strictEqual(r.hardware.total, r.hardware.perCurtain);
 });
+
+test("a taped heading needs heading tape by the metre", function () {
+  var r = D.plan({ track: { width: 3, unit: "m" }, drop: { value: 2, unit: "m" }, heading: "pencil" });
+  assert.ok(r.headingTape);
+  assert.strictEqual(r.headingTape.label, "heading tape");
+  // tape per curtain = widthsPer * fabricWidth + 16 cm; total rounds up to whole metres
+  assert.ok(r.headingTape.totalM >= r.headingTape.perCurtainM * r.headingTape.curtains - 1);
+  assert.strictEqual(r.headingTape.totalM, Math.ceil(r.headingTape.perCurtainM * r.headingTape.curtains - 1e-9));
+});
+
+test("an eyelet heading uses no sewn tape", function () {
+  var r = D.plan({ track: { width: 3, unit: "m" }, drop: { value: 2, unit: "m" }, heading: "eyelet" });
+  assert.strictEqual(r.headingTape, undefined);
+});
+
+test("a wave heading uses wave tape", function () {
+  var r = D.plan({ track: { width: 3, unit: "m" }, drop: { value: 2, unit: "m" }, heading: "wave" });
+  assert.ok(r.headingTape);
+  assert.strictEqual(r.headingTape.label, "wave tape");
+});
+
+test("a single curtain needs about half the tape of a pair", function () {
+  var single = D.plan({ track: { width: 3, unit: "m" }, drop: { value: 2, unit: "m" }, heading: "pencil", pair: false });
+  var pair = D.plan({ track: { width: 3, unit: "m" }, drop: { value: 2, unit: "m" }, heading: "pencil", pair: true });
+  assert.strictEqual(single.headingTape.curtains, 1);
+  assert.strictEqual(pair.headingTape.curtains, 2);
+  assert.ok(pair.headingTape.totalM > single.headingTape.totalM);
+});
