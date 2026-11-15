@@ -203,6 +203,23 @@
       };
     }
 
+    // Heading tape (curtain tape) is sewn across the top and bought by the
+    // metre, so it's easy to under-buy. A taped heading (pencil, pinch pleat,
+    // wave) needs it; an eyelet heading has rings punched into the fabric and
+    // uses none. The tape runs the full flat width of each curtain plus a
+    // turn-under at each end, and comes off the roll in whole metres.
+    var TAPED = { pencil: true, "pinch-double": true, "pinch-triple": true, wave: true };
+    if (TAPED[h]) {
+      var curtains = pair ? 2 : 1;
+      var tapePerCurtainCm = widthsPer * fabricCm + 16; // 8 cm turned under each end
+      out.headingTape = {
+        label: h === "wave" ? "wave tape" : "heading tape",
+        perCurtainM: round2(tapePerCurtainCm / 100),
+        curtains: curtains,
+        totalM: Math.ceil((tapePerCurtainCm * curtains) / 100)
+      };
+    }
+
     var price = parseFloat(opts.price);
     if (isFinite(price) && price > 0) {
       out.cost = round2(totalM * price);
@@ -236,6 +253,10 @@
     tips.push("Open, the curtains bunch to about " + r.stackbackCm + " cm" +
       (r.pair ? " (roughly " + r.stackbackSideCm + " cm at each end)" : " to one side") +
       ". So the pole or track wants to run about that far past the glass each side, or the stacked fabric sits over the window and loses light.");
+    if (r.headingTape) {
+      tips.push("You'll also need about " + r.headingTape.totalM + " m of " + r.headingTape.label +
+        " (it's sold by the metre), the full top width of each curtain plus a turn-under each end. An eyelet heading uses rings instead, so no tape.");
+    }
     tips.push("Double-check the fabric width with the shop before you cut; a few cm less and a drop may not fit, a few more and you may save a width.");
     tips.push("Planning figures. Measure the finished drop with the track already up, and buy it all from one roll and batch so the colour matches.");
     return tips;
